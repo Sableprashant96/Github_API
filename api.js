@@ -1,6 +1,4 @@
-// setInterval(function(){
-//   location.reload();
-// }, 2000);
+// Variable declaration 
 let apiCalled = false;
 let userAvatarUrl = '';
 let uName = '';
@@ -19,7 +17,7 @@ let hideBio;
 let hideButton;
 
 
-
+// initialization
 $(document).ready(function() {
   hideBio = $("#bio-hide");
   hideBio.addClass("d-none");
@@ -28,7 +26,7 @@ $(document).ready(function() {
 
 });
 
-
+// Change current page button styles for better UX
 function highlightCurrentPageButton() {
   const paginationContainer = $("#pagination-container");
   const prevButton = $("#previous-button");
@@ -36,38 +34,41 @@ function highlightCurrentPageButton() {
 
   paginationContainer.find("button").each(function () {
     if ($(this).text() == page) {
-      $(this).addClass("btn m-1 rounded-circle btn-outline-secondary").prop("disabled", true);
+      $(this).removeClass("btn-outline-success").addClass("btn m-1 rounded-circle btn-secondary").prop("disabled", true);
     } else {
       $(this).removeClass("btn-outline-secondary").prop("disabled", false);
     }
   });
 
-  prevButton.prop("disabled", page === 1);
-  nextButton.prop("disabled", page === this.maxVisiblePage);
+  prevButton.prop("disabled", page <= 1);
+  nextButton.prop("disabled", page > this.maxVisiblePage - 1);
 }
 
-
+// API Calling function
 function searchUser() {
 
+  // Show loading spinner
   const loadingOverlay = $("#loading-overlay");
-  loadingOverlay.removeClass("d-none"); // Show loading spinner
+  loadingOverlay.removeClass("d-none"); 
   hideBio.removeClass("d-none");
   hideButton.removeClass("d-none");
 
+  // Collect data for API processing
   const inputField = document.getElementById("input");
   const dropDown = document.getElementById("perPage");
   const userName = inputField.value;
   this.repoPerPage = dropDown.value;
 
 
-
+// raises alert if input field is empty
   if (userName.length === 0) {
     loadingOverlay.addClass("d-none");
     alert("User Name is empty");
-  } else if (!apiCalled) {
-    apiCalled = true;
+    hideBio.addClass("d-none");
+    hideButton.addClass("d-none");
+  } else {
 
-
+    // API Calling using username provided by user
     fetch("https://api.github.com/users/" + userName)
       .then((result) => result.json())
       .then((data) => {
@@ -82,8 +83,7 @@ function searchUser() {
         this.noOfRepos = data.public_repos;
         this.maxVisiblePage = Math.ceil(this.noOfRepos / this.repoPerPage)
 
-
-
+        
         if (data.name === null) {
           $("#user-name").text("Name Not Available");
         } else {
@@ -131,15 +131,15 @@ function searchUser() {
         $("#user-following").text(following);
         $("#user-followers").text(followers);
 
-
-
+        //clear already rendered data
         $("#pagination-container").html("");
+
+        //buttons for pagination
         const paginationContainer = $("#pagination-container");
         for (let i = 1; i <= this.maxVisiblePage; i++) {
           const pageButton = $("<button>");
           pageButton.addClass("m-1 rounded-circle btn btn-outline-success");
           pageButton.text(i);
-
           pageButton.click(function () {
             page = $(this).text();
             paginationContainer.find("button").not(this).removeClass("btn-success").prop("disabled", false);
@@ -151,6 +151,7 @@ function searchUser() {
         }
 
       })
+      // handle errors while fetching data
       .catch((error) => {
         hideBio.addClass("d-none");
         hideButton.addClass("d-none");
@@ -158,15 +159,16 @@ function searchUser() {
         alert("An error occurred while fetching user data.");
       })
 
-
+// API to fetch repo details
     fetch("https://api.github.com/users/" + userName + "/repos?page=" + page + "&per_page=" + this.repoPerPage)
       .then((result) => result.json())
       .then((repoData) => {
         const repos = repoData;
 
+        //clears already rendered data
         $("#repo-list").html("");
 
-
+//repos container
         repos.forEach((repo) => {
           const repoContainer = $("<div>");
           repoContainer.addClass("col p-4 m-2  h-full border-2 flex-col rounded-4 shadow-lg");
@@ -201,13 +203,17 @@ function searchUser() {
           $("#repo-list").append(repoContainer);
         });
       })
+
+      //error handling if any
       .catch((error) => {
         hideBio.addClass("d-none");
         hideButton.addClass("d-none");
         alert("An error occurred while fetching user data.");
         console.error("API error:", error);
 
-      }).finally(() => {
+      })
+      //final stage - stops loader
+      .finally(() => {
         apiCalled = false;
         highlightCurrentPageButton();
         loadingOverlay.addClass("d-none");
@@ -217,22 +223,19 @@ function searchUser() {
 
   }
 }
+// previous and next button logics
 $(document).ready(function () {
   $("#previous-button").click(function () {
     if (page > 1) {
       page--;
-      console.log(page);
       searchUser();
-
       highlightCurrentPageButton();
     }
   });
 
   $("#next-button").click(function () {
     page++;
-    console.log(page);
     searchUser();
-
     highlightCurrentPageButton();
   });
 });
