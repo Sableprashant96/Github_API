@@ -7,15 +7,17 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.975); /* Background color with some transparency */
+    background-color: rgba(255, 255, 255, 0.404);
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 100px;
+    margin-bottom: 100px;
   }
   
-  /* Styles for loading spinner container */
+
   .spinner-container {
-    background-color: #fff; /* Background color for the spinner container */
-    padding: 20px; /* Add padding for better visibility */
+    background-color: #fff; 
+    padding: 20px;
     border-radius: 10px;
   }
