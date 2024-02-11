@@ -1,7 +1,7 @@
 # Github-Search 
 #### GitHub Repositories Listing Page
 
-This project is a solution to the Fyle Web Development Internship challenge, which involves designing a website that displays public GitHub repositories belonging to a specific user. The challenge focuses on implementing server-side pagination, handling API calls, and optionally providing a search functionality.
+This project involves designing a website that displays public GitHub repositories belonging to a specific user. The challenge focuses on implementing server-side pagination, handling API calls, and optionally providing a search functionality.
 
 ## Project Details
 
